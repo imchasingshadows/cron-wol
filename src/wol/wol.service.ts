@@ -7,6 +7,7 @@ import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class WolService {
+  private logger = new Logger(WolService.name);
   private enabled = this.cs.get("enabled");
 
   constructor(
@@ -30,7 +31,7 @@ export class WolService {
       });
 
       this.sr.addCronJob(name, job);
-      Logger.log(`Registerd Job for: ${name}`, WolService.name);
+      this.logger.log(`Registerd Job for: ${name}`);
       job.start();
     }
   }
@@ -46,9 +47,9 @@ export class WolService {
   private async sendMagicPacket(address: string): Promise<void> {
     try {
       await wol.wake(address);
-      Logger.log("Sent Magic Packet", address);
+      this.logger.log("Sent Magic Packet", address);
     } catch (error) {
-      Logger.error(`Error Sending Magic Packet`, error, address);
+      this.logger.error(`Error Sending Magic Packet`, error, address);
     }
   }
 }
